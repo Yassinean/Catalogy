@@ -6,24 +6,22 @@ services:
       dockerfile: Dockerfile
     container_name: gestion-produits-app
     ports:
+      - '8080:8080'
+    depends_on:
+      - oracle
+    networks:
+      - spring-network
 
-  '8080:8080'  # Adjust the port as needed
-depends_on:
-  oracle
-networks:
-  app-network
-
-oracle:
-  image: 'gvenzl/oracle-free:latest'
-  container_name: oracle-db
-  environment:
-
-  ORACLE_PASSWORD=secret
-ports:
-  '1521:1521'
-networks:
-  app-network
+  oracle:
+    image: 'gvenzl/oracle-free:latest'
+    container_name: oracle-db
+    environment:
+      - ORACLE_PASSWORD=secret
+    ports:
+      - '1521:1521'
+    networks:
+      - spring-network
 
 networks:
-  app-network:
+  spring-network:
     driver: bridge
