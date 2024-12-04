@@ -30,30 +30,35 @@ public class CategoryImp implements CategoryInterface {
     }
 
     @Override
-    public CategoryResponseDto update(Long id , CategoryRequestDto categoryRequestDto) {
-        Category category = categoryRepository.findById(id).orElseThrow(()-> new CategoryException("category not found"));
+    public CategoryResponseDto update(Long id, CategoryRequestDto categoryRequestDto) {
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new CategoryException("Category not found"));
 
         category.setNom(categoryRequestDto.nom());
         category.setDescription(categoryRequestDto.description());
-    
+
         Category categoryUpdated = categoryRepository.save(category);
         return categoryMapper.toResponseDto(categoryUpdated);
-        
     }
 
     @Override
     public void delete(Long id) {
+        if (!categoryRepository.existsById(id)) {
+            throw new CategoryException("Category not found");
+        }
         categoryRepository.deleteById(id);
     }
 
     @Override
     public Optional<CategoryResponseDto> findById(Long id) {
-        return categoryRepository.findById(id).map(categoryMapper::toResponseDto);        
+        return categoryRepository.findById(id).map(categoryMapper::toResponseDto);
     }
 
     @Override
     public List<CategoryResponseDto> findAll() {
-        return categoryRepository.findAll().stream().map(categoryMapper::toResponseDto).toList();
+        return categoryRepository.findAll().stream()
+                .map(categoryMapper::toResponseDto)
+                .toList();
     }
 
 }
