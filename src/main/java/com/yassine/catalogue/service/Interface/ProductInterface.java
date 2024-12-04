@@ -13,4 +13,6 @@ public interface ProductInterface {
     void delete(Long id);
     Optional<ProductResponseDto> findById(Long id);
     List<ProductResponseDto> findAll(); 
+    List<ProductResponseDto> findByCategoryId(Long id); 
+
 }

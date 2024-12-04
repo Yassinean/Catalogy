@@ -6,5 +6,6 @@ import lombok.Builder;
 public record ProductResponseDto(
     String designation,
     Double prix,
-    Integer quantity
+    Integer quantity,
+    String categoryNom
 ) {}
