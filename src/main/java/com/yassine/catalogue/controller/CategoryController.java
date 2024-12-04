@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.yassine.catalogue.dto.request.CategoryRequestDto;
 import com.yassine.catalogue.dto.res.CategoryResponseDto;
-import com.yassine.catalogue.mapper.CategoryMapper;
 import com.yassine.catalogue.service.Interface.CategoryInterface;
 
 import lombok.RequiredArgsConstructor;
@@ -27,7 +26,6 @@ import lombok.RequiredArgsConstructor;
 public class CategoryController {
 
     private final CategoryInterface categoryInterface;
-    private final CategoryMapper categoryMapper;
 
     @PostMapping
     public ResponseEntity<CategoryResponseDto> create(@Validated @RequestBody CategoryRequestDto categoryRequestDto) {
@@ -37,25 +35,27 @@ public class CategoryController {
 
     @PatchMapping("/{id}")
     public ResponseEntity<CategoryResponseDto> update(
-                                                        @PathVariable Long id,
-                                                        @Validated @RequestBody CategoryRequestDto categoryRequestDto) {
-        CategoryResponseDto updateCategoryResponseDto = categoryInterface.update(id,categoryRequestDto);
+            @PathVariable Long id,
+            @Validated @RequestBody CategoryRequestDto categoryRequestDto) {
+        CategoryResponseDto updateCategoryResponseDto = categoryInterface.update(id, categoryRequestDto);
         return ResponseEntity.ok(updateCategoryResponseDto);
     }
 
-    @DeleteMapping
-    public ResponseEntity<CategoryResponseDto> delete(@PathVariable Long id){
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
         categoryInterface.delete(id);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CategoryResponseDto> findById(@PathVariable Long id){
-        return categoryInterface.findById(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<CategoryResponseDto> findById(@PathVariable Long id) {
+        return categoryInterface.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
-    
+
     @GetMapping
-    public ResponseEntity<List<CategoryResponseDto>> findAll(){
+    public ResponseEntity<List<CategoryResponseDto>> findAll() {
         List<CategoryResponseDto> categories = categoryInterface.findAll();
         return ResponseEntity.ok(categories);
     }
