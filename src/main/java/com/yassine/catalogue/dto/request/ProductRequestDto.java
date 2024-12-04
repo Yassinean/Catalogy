@@ -8,7 +8,7 @@ import lombok.Builder;
 @Builder
 public record ProductRequestDto(
     @NotBlank String designation,
-    @NotNull @Positive Double prix,
+    @NotNull @Positive Double price,
     @NotNull @Positive Integer quantity,
     Long categoryId
 ) {}
