@@ -1,5 +1,10 @@
 package com.yassine.catalogue.dto.res;
 
-public record ProductResponseDto() {
+import lombok.Builder;
 
-}
+@Builder
+public record ProductResponseDto(
+    String designation,
+    Double prix,
+    Integer quantity
+) {}
