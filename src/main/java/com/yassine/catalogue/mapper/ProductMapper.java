@@ -1,5 +1,13 @@
 package com.yassine.catalogue.mapper;
 
-public interface ProductMapper {
+import org.mapstruct.Mapper;
 
+import com.yassine.catalogue.dto.request.ProductRequestDto;
+import com.yassine.catalogue.dto.res.ProductResponseDto;
+import com.yassine.catalogue.entities.Product;
+
+@Mapper(componentModel = "spring")
+public interface ProductMapper {
+    Product toEntity(ProductRequestDto productRequestDto);
+    ProductResponseDto toResponseDto (Product Product);
 }
