@@ -13,14 +13,16 @@ import com.yassine.catalogue.mapper.CategoryMapper;
 import com.yassine.catalogue.repository.CategoryRepository;
 import com.yassine.catalogue.service.Interface.CategoryInterface;
 
-import lombok.RequiredArgsConstructor;
-
 @Service
-@RequiredArgsConstructor
 public class CategoryImp implements CategoryInterface {
 
-    private final CategoryRepository categoryRepository;
-    private final CategoryMapper categoryMapper;
+    private CategoryRepository categoryRepository;
+    private CategoryMapper categoryMapper;
+
+    public CategoryImp(CategoryRepository categoryRepository, CategoryMapper categoryMapper) {
+        this.categoryRepository = categoryRepository;
+        this.categoryMapper = categoryMapper;
+    }
 
     @Override
     public CategoryResponseDto create(CategoryRequestDto categoryRequestDto) {
@@ -31,11 +33,11 @@ public class CategoryImp implements CategoryInterface {
 
     @Override
     public CategoryResponseDto update(Long id , CategoryRequestDto categoryRequestDto) {
-        Category category = categoryRepository.findById(id).orElseThrow(()-> new CategoryException("category not found"));
+        Category category = categoryRepository.findById(id).orElseThrow(() -> new CategoryException("category not found"));
 
         category.setNom(categoryRequestDto.nom());
         category.setDescription(categoryRequestDto.description());
-    
+
         Category categoryUpdated = categoryRepository.save(category);
         return categoryMapper.toResponseDto(categoryUpdated);
         

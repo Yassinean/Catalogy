@@ -1,21 +1,16 @@
 package com.yassine.catalogue.service.Interface;
 
 import java.util.List;
-import java.util.Optional;
-
-import com.yassine.catalogue.dto.request.UserRequestDto;
 import com.yassine.catalogue.dto.res.UserResponseDto;
+import com.yassine.catalogue.entities.User;
 
-public interface UserInterface {
-  UserResponseDto create(UserRequestDto userRequestDto);
+public interface RoleInterface {
+  List<UserResponseDto> findAll();
 
-    UserResponseDto update(Long id, UserRequestDto userRequestDto);
+  UserResponseDto updateUserRole(Long id, String role);
 
-    void delete(Long id);
+  void saveUser(User user);
 
-    Optional<UserResponseDto> findById(Long id);
+  boolean existsByUsername(String username);
 
-    List<UserResponseDto> findAll();
-
-    Optional<UserResponseDto> findByUsername(String username);
 }

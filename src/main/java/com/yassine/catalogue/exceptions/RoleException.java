@@ -1,7 +1,7 @@
 package com.yassine.catalogue.exceptions;
 
-public class UserException extends RuntimeException {
-    public UserException(String message){
+public class RoleException extends RuntimeException {
+    public RoleException(String message){
         super(message);
     }
 }

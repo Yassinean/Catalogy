@@ -15,15 +15,19 @@ import com.yassine.catalogue.repository.CategoryRepository;
 import com.yassine.catalogue.repository.ProductRepository;
 import com.yassine.catalogue.service.Interface.ProductInterface;
 
-import lombok.RequiredArgsConstructor;
 
 @Service
-@RequiredArgsConstructor
 public class ProductImp implements ProductInterface {
 
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
     private final ProductMapper productMapper;
+
+    public ProductImp(ProductRepository productRepository, CategoryRepository categoryRepository, ProductMapper productMapper) {
+        this.productRepository = productRepository;
+        this.categoryRepository = categoryRepository;
+        this.productMapper = productMapper;
+    }
 
     @Override
     public ProductResponseDto create(ProductRequestDto productRequestDto) {
@@ -73,7 +77,7 @@ public class ProductImp implements ProductInterface {
 
     @Override
     public List<ProductResponseDto> findByCategoryId(Long categoryId) {
-        return productRepository.findByCategorie_Id(categoryId).stream()
+        return productRepository.findByCategory_Id(categoryId).stream()
                 .map(productMapper::toResponseDto)
                 .toList();
     }

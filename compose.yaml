@@ -1,27 +1,59 @@
-version: '3.8'
+version: "3.8"
+
 services:
+  # Development DB service
+  dev-db:
+    image: mariadb:latest
+    container_name: dev-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: dev_db_product_managements
+      MYSQL_USER: dev_user
+      MYSQL_PASSWORD: dev_password
+    ports:
+      - "3306:3306"
+    networks:
+      - app-network
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Spring Boot application
   app:
     build:
       context: .
-      dockerfile: Dockerfile
-    container_name: gestion-produits-app
-    ports:
-      - '8080:8080'
-    depends_on:
-      - oracle
-    networks:
-      - spring-network
-
-  oracle:
-    image: 'gvenzl/oracle-free:latest'
-    container_name: oracle-db
+    container_name: catalogue-app
     environment:
-      - ORACLE_PASSWORD=secret
+      SPRING_PROFILES_ACTIVE: dev # Set active profile to dev
     ports:
-      - '1521:1521'
+      - "9090:8082" # Maps app port
+    depends_on:
+      - dev-db
     networks:
-      - spring-network
+      - app-network
+
+  # phpMyAdmin
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: phpmyadmin
+    environment:
+      PMA_HOST: dev-db
+      PMA_PORT: 3306
+      MYSQL_ROOT_PASSWORD: root_password
+    ports:
+      - "8080:80" # Exposes phpMyAdmin for dev only
+    depends_on:
+      - dev-db
+    networks:
+      - app-network
 
 networks:
-  spring-network:
+  app-network:
     driver: bridge
+
+volumes:
+  db_data:

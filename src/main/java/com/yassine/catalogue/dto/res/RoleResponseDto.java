@@ -3,7 +3,7 @@ package com.yassine.catalogue.dto.res;
 import lombok.Builder;
 
 @Builder
-public record UserResponseDto(
+public record RoleResponseDto(
         Long id,
         String username,
         String email,

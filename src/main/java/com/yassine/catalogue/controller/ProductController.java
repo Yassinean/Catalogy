@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,26 +12,33 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.yassine.catalogue.dto.request.ProductRequestDto;
 import com.yassine.catalogue.dto.res.ProductResponseDto;
 import com.yassine.catalogue.service.Interface.ProductInterface;
 
-import lombok.RequiredArgsConstructor;
+// import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequiredArgsConstructor
+@RequestMapping("/api/admin/products")
 public class ProductController {
 
-    private final ProductInterface productInterface;
+    private ProductInterface productInterface;
 
+    public ProductController(ProductInterface productInterface) {
+        this.productInterface = productInterface;
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<ProductResponseDto> create(@Validated @RequestBody ProductRequestDto productRequestDto) {
         ProductResponseDto productResponseDto = productInterface.create(productRequestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(productResponseDto);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/{id}")
     public ResponseEntity<ProductResponseDto> update(
             @PathVariable Long id,
@@ -39,6 +47,7 @@ public class ProductController {
         return ResponseEntity.ok(updatedProductResponseDto);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         productInterface.delete(id);

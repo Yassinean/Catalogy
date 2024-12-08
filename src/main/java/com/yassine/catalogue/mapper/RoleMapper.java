@@ -3,8 +3,10 @@ package com.yassine.catalogue.mapper;
 import com.yassine.catalogue.dto.request.UserRequestDto;
 import com.yassine.catalogue.dto.res.UserResponseDto;
 import com.yassine.catalogue.entities.User;
+import org.mapstruct.Mapper;
 
-public interface UserMapper {
+@Mapper(componentModel = "spring")
+public interface RoleMapper {
     User toEntity(UserRequestDto userRequestDto);
 
     UserResponseDto toResponseDto(User user);

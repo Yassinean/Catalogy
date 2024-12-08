@@ -5,7 +5,10 @@ import lombok.Builder;
 @Builder
 public record ProductResponseDto(
     String designation,
-    Double prix,
+    Double price,
     Integer quantity,
-    String categoryNom
+    Long categoryId,
+    Long userId,
+    String categoryNom,
+    String userNom
 ) {}
