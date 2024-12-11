@@ -1,23 +1,14 @@
-# Stage 1: Build
-FROM maven:3.8.8-eclipse-temurin-17 AS build
+# Use a base image with OpenJDK
+FROM openjdk:17-jdk-alpine
+
+# Set the working directory in the container
 WORKDIR /app
 
-# Copiez uniquement les fichiers nécessaires pour résoudre les dépendances en premier
-COPY pom.xml . 
-COPY src ./src
+# Copy the jar file (build the jar with 'mvn clean package' or 'gradle build' first)
+COPY target/product_managementV2-0.0.1-SNAPSHOT.jar product-management.jar
 
-# Résolution des dépendances et construction du projet
-RUN mvn clean package -DskipTests
+# Expose the port your Spring Boot app will run on
+EXPOSE 8080
 
-# Stage 2: Run
-FROM eclipse-temurin:17-jdk-alpine AS runtime
-WORKDIR /app
-
-# Copiez le JAR généré depuis l'étape de build
-COPY --from=build /app/target/*.jar app.jar
-
-# Exposez le port sur lequel l'application écoute
-EXPOSE 8082
-
-# Commande pour exécuter l'application
-ENTRYPOINT ["java", "-jar", "/app/app.jar"]
+# Run the app when the container starts
+ENTRYPOINT ["java", "-jar", "product-management.jar"]

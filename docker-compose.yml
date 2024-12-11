@@ -1,0 +1,92 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev  # Ensure this matches the dev profile
+    ports:
+      - "8080:8080" # Access Project at http://localhost:8080
+    depends_on:
+      - dev-db  # Ensure that app waits for dev-db to be ready
+    networks:
+      - app-network
+
+  # Development DB service
+  dev-db:
+    image: mariadb:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: dev_db_product_managements
+      MYSQL_USER: dev_user
+      MYSQL_PASSWORD: dev_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - dev-db-data:/var/lib/mysql  # Corrected volume mapping
+    networks:
+      - app-network
+    healthcheck:
+      test: [ "CMD-SHELL", "mysqladmin ping -h localhost -u root -proot_password || exit 1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Production DB service
+  prod-db:
+    image: mariadb:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: prod_db_product_managements
+      MYSQL_USER: prod_user
+      MYSQL_PASSWORD: prod_password
+    ports:
+      - "3307:3306"
+    volumes:
+      - prod-db-data:/var/lib/mysql  # Added volume mapping for production
+    networks:
+      - app-network
+
+  # Adminer for Development DB
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: phpmyadmin
+    environment:
+      PMA_HOST: dev-db  # Default connection to the dev-db database
+      PMA_PORT: 3306
+      MYSQL_ROOT_PASSWORD: root_password
+    ports:
+      - "8081:80" # Access phpMyAdmin at http://localhost:8081
+    networks:
+      - app-network
+    depends_on:
+      - dev-db
+
+  jenkins:
+    image: jenkins/jenkins:lts
+    container_name: jenkins
+    ports:
+      - "8082:8080"  # Access Jenkins at http://localhost:8082
+      - "50000:50000" # Jenkins agent connection
+    volumes:
+      - jenkins_home:/var/jenkins_home  # Persist Jenkins data
+      - /var/run/docker.sock:/var/run/docker.sock  # Allow Jenkins to use Docker
+    environment:
+      - JAVA_OPTS=-Duser.home=/var/jenkins_home
+    networks:
+      - app-network
+    depends_on:
+      - app  # Ensure Jenkins waits for the app to be ready
+
+volumes:
+  dev-db-data:
+    driver: local  # Volume for persistent storage for dev-db
+  prod-db-data:
+    driver: local  # Volume for persistent storage for prod-db
+  jenkins_home:
+    driver: local
+
+
+networks:
+  app-network:
+    driver: bridge
